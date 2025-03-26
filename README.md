@@ -43,18 +43,18 @@ when using attribute you can put the name or type or options of attribute after 
 ## Design Decisions and Trade-offs
 
 1.EAV Implementation:
-    - Used a traditional EAV pattern with separate tables for attributes and values
-    - Trade-off: More complex queries but provides maximum flexibility
-    - Alternative: JSON columns in the jobs table for simpler queries but less filtering capability
+- Used a traditional EAV pattern with separate tables for attributes and values
+- Trade-off: More complex queries but provides maximum flexibility
+- Alternative: JSON columns in the jobs table for simpler queries but less filtering capability
 2.Filter Parsing:
-    - Implemented a custom parser for the filter string
-    - Trade-off: Could have used a package like Doctrine's Lexer for more robust parsing
-    - Decision: Kept it simple for the assessment but noted it would need improvement
+- Implemented a custom parser for the filter string
+- Trade-off: Could have used a package like Doctrine's Lexer for more robust parsing
+- Decision: Kept it simple for the assessment but noted it would need improvement
 3.Query Optimization:
-    - Added indexes on frequently filtered fields
-    - Used eager loading to prevent N+1 queries
-    - Trade-off: More complex queries for EAV filtering
+- Added indexes on frequently filtered fields
+- Used eager loading to prevent N+1 queries
+- Trade-off: More complex queries for EAV filtering
 4.API Design:
-    - Chose a single filter parameter with a custom syntax    
-    - Alternative: Could have used multiple query parameters for different filter types
-    - Decision: Single parameter allows for more complex, nested filters
+- Chose a single filter parameter with a custom syntax    
+- Alternative: Could have used multiple query parameters for different filter types
+- Decision: Single parameter allows for more complex, nested filters
