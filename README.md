@@ -40,7 +40,7 @@ when using attribute you can put the name or type or options of attribute after 
 }
 ```
 
-## Design Decisions and Trade-offs
+### Design Decisions and Trade-offs
 
 1.EAV Implementation:
 -** Used a traditional EAV pattern with separate tables for attributes and values**
