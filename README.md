@@ -1,66 +1,63 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Job Listing Management System
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Introduction
 
-## About Laravel
+This is a job listing management system with complex filtering capabilities, built using the Laravel web framework and a relational database. The system allows users to manage job listings with advanced filtering options.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Technology Used
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- Laravel
+- MySQL
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Installation and Usage
 
-## Learning Laravel
+### Running the Project
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+1. Clone the repository to your local machine using `git clone`.
+2. Install dependencies: `composer install`.
+3. Create and configure the `.env` file.
+4. Run database migrations: `php artisan migrate`.
+5. Seed the database: `php artisan db:seed`.
+6. Start the server: `php artisan serve`.
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+## API Documentation
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Jobs Endpoint
 
-## Laravel Sponsors
+#### GET `/api/jobs`
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+Retrieves all job listings with complex filtering options. The filtering system allows querying jobs based on attributes, languages, locations, and categories using various operators (`=`, `!=`, `>`, `<`, `>=`, `<=`, `IN`, `LIKE`).
 
-### Premium Partners
+**Important Notes on Filters:**
+- When using `IN`, provide values in parentheses `()` separated by commas, with no spaces between `IN` and `()`.
+- To filter by attributes, use the format `attribute_name:condition`. You can use `IN` with multiple values inside `()`.
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+**Example Request Parameters:**
 
-## Contributing
+```json
+{
+    "filter": "(job_type IN(full-time) AND (languages HAS_ANY(php))) AND (locations IS_ANY(NY)) OR attribute:years_experience<5"
+}
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## Design Decisions and Trade-offs  
 
-## Code of Conduct
+### **1. EAV Implementation**  
+- Used a traditional Entity-Attribute-Value (EAV) pattern with separate tables for attributes and values.  
+- **Trade-off:** More complex queries but provides maximum flexibility.  
+- **Alternative:** JSON columns in the jobs table for simpler queries but less filtering capability.  
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### **2. Filter Parsing**  
+- Implemented a custom parser for the filter string.  
+- **Trade-off:** Could have used a package like Doctrine's Lexer for more robust parsing.  
+- **Decision:** Kept it simple for the initial implementation but noted the need for improvement.  
 
-## Security Vulnerabilities
+### **3. Query Optimization**  
+- Added indexes on frequently filtered fields.  
+- Used eager loading to prevent N+1 queries.  
+- **Trade-off:** More complex queries for EAV filtering.  
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### **4. API Design**  
+- Chose a single filter parameter with a custom syntax.  
+- **Alternative:** Could have used multiple query parameters for different filter types.  
+- **Decision:** A single parameter allows for more complex, nested filters.  
