@@ -40,5 +40,24 @@ Retrieves all job listings with complex filtering options. The filtering system 
 }
 ```
 
-This README provides an overview of the system and its design choices to ensure flexibility, performance, and maintainability.
+## Design Decisions and Trade-offs  
 
+### **1. EAV Implementation**  
+- Used a traditional Entity-Attribute-Value (EAV) pattern with separate tables for attributes and values.  
+- **Trade-off:** More complex queries but provides maximum flexibility.  
+- **Alternative:** JSON columns in the jobs table for simpler queries but less filtering capability.  
+
+### **2. Filter Parsing**  
+- Implemented a custom parser for the filter string.  
+- **Trade-off:** Could have used a package like Doctrine's Lexer for more robust parsing.  
+- **Decision:** Kept it simple for the initial implementation but noted the need for improvement.  
+
+### **3. Query Optimization**  
+- Added indexes on frequently filtered fields.  
+- Used eager loading to prevent N+1 queries.  
+- **Trade-off:** More complex queries for EAV filtering.  
+
+### **4. API Design**  
+- Chose a single filter parameter with a custom syntax.  
+- **Alternative:** Could have used multiple query parameters for different filter types.  
+- **Decision:** A single parameter allows for more complex, nested filters.  
